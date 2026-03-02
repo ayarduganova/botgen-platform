@@ -1,0 +1,22 @@
+bot: OrderBot
+
+slots:
+  name:
+    type: text
+  phone:
+    type: phone
+    pattern: '^(\+?\d[\d\s\-()]{7,}\d)$'
+    error_text: "Похоже, это не номер телефона. Введите, например: +385 91 123 4567"
+
+flow:
+  - type: say
+    text: "Привет! Давай оформим заказ."
+  - type: ask
+    slot: name
+    text: "Как тебя зовут?"
+  - type: ask
+    slot: phone
+    text: "Твой телефон?"
+  - type: say
+    text: "Спасибо! Заказ оформлен."
+  - type: end
