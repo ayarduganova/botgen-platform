@@ -1,6 +1,6 @@
 import yaml
 import uuid
-from app.models.compiled_model import Node, CompiledBot, SlotSpec
+from app.models.compiled_model import Node, CompiledBot, SlotSpec, RuleSpec
 
 def compile_bot(path: str) -> CompiledBot:
     # чтение yaml
@@ -14,6 +14,10 @@ def compile_bot(path: str) -> CompiledBot:
     #   "phone": SlotSpec(type="phone", pattern="regex")
     # }
     slots = {name: SlotSpec(**(spec or {})) for name, spec in raw_slots.items()}
+
+    # получаем rules или []
+    raw_rules = data.get("rules", []) or []
+    rules = [RuleSpec(**r) for r in raw_rules]
 
     nodes = []
     # id первой ноды
@@ -42,6 +46,7 @@ def compile_bot(path: str) -> CompiledBot:
     return CompiledBot(
         bot=data["bot"],
         slots=slots,
+        rules=rules,
         nodes=nodes,
         start_node=start_node,
     )

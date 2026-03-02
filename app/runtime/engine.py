@@ -2,6 +2,7 @@ from typing import List, Dict, Optional
 from app.models.compiled_model import CompiledBot, Node
 from app.runtime.session import SessionState
 from app.runtime.validators import validate_slot
+from app.runtime.rules import match_rule, apply_rule
 
 # словарь
 class EngineResponse(dict):
@@ -18,6 +19,24 @@ def run_step(
     user_text: Optional[str],
 ) -> EngineResponse:
     messages: List[str] = []
+
+    # обработка правил
+    # проверяем правило ли
+    rule = match_rule(bot, user_text)
+    if rule is not None:
+        # применяем его
+        rule_msgs = apply_rule(bot, session, rule)
+
+        # если это restart — сразу продолжаем диалог с начала
+        if (rule.action or "").lower() == "restart":
+            cont = run_step(bot, nodes, session, None)
+            # склеиваем сообщения: "начинаем заново" + приветствие/вопрос
+            return EngineResponse(
+                messages=rule_msgs + cont["messages"],
+                session=cont["session"],
+            )
+        # если не restart - выводим сообщение бота
+        return EngineResponse(messages=rule_msgs, session=session)
 
     if session.is_finished:
         return EngineResponse(messages=["Диалог уже завершён."], session=session)

@@ -20,3 +20,19 @@ flow:
   - type: say
     text: "Спасибо! Заказ оформлен."
   - type: end
+
+rules:
+  - name: cancel
+    pattern: "^(cancel|отмена|стоп|выход)$"
+    response: "Ок, отменяю."
+    action: end
+
+  - name: help
+    pattern: "^(help|помощь|что ты умеешь)$"
+    response: "Я могу оформить заказ: спрошу имя и телефон. В любой момент напишите 'отмена'."
+    action: none
+
+  - name: restart
+    pattern: "^(restart|заново|сначала|старт)$"
+    response: "Ок, начинаем заново."
+    action: restart
