@@ -3,6 +3,7 @@ from app.models.compiled_model import CompiledBot, Node
 from app.runtime.session import SessionState
 from app.runtime.validators import validate_slot
 from app.runtime.rules import match_rule, apply_rule
+import re
 
 # словарь
 class EngineResponse(dict):
@@ -100,6 +101,44 @@ def run_step(
             session.is_finished = True
             messages.append("✅ Диалог завершён.")
             break
+
+        if node.type == "condition":
+            # получаем слот и операцию
+            slot_name = node.slot
+            op = (node.op or "exists").lower()
+            slot_val = session.slots.get(slot_name) if slot_name else None
+
+            result = False
+
+            # slot_val должен существовать (не None и не пустая строка)
+            if op == "exists":
+                result = bool(slot_val and str(slot_val).strip())
+
+            # сравнение на равенство с заданным значением
+            elif op == "equals":
+                result = (slot_val is not None) and (str(slot_val) == str(node.value))
+
+            elif op == "not_equals":
+                result = (slot_val is None) or (str(slot_val) != str(node.value))
+
+            # проверка на соответствие regex-шаблону
+            elif op == "matches":
+                if slot_val is not None and node.value:
+                    result = re.match(str(node.value), str(slot_val)) is not None
+
+            else:
+                messages.append(f"⚠️ Unknown condition op: {op}")
+                session.is_finished = True
+                break
+
+            next_id = node.next_true if result else node.next_false
+            if not next_id:
+                messages.append("⚠️ Condition has no next branch.")
+                session.is_finished = True
+                break
+
+            session.current_node_id = next_id
+            continue
 
         messages.append(f"⚠️ Неизвестная нода: {node.type}")
         session.is_finished = True

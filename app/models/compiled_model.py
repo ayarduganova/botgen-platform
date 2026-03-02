@@ -32,6 +32,15 @@ class Node(BaseModel):
     slot: Optional[str] = None
     # ссылка на следующую ноду
     next_node: Optional[str] = None
+    #---------для condition------------
+    # опции: equals | not_equals | exists | matches
+    op: Optional[str] = None
+    # значение для сравнения
+    value: Optional[str] = None
+    # куда идти если true
+    next_true: Optional[str] = None
+    # куда идти если false
+    next_false: Optional[str] = None
 
 
 class CompiledBot(BaseModel):

@@ -10,7 +10,7 @@ from app.storage.memory_store import MemorySessionStore
 app = FastAPI(title="BotGen Runtime")
 
 # читает YAML и строит модель бота (граф нод)
-compiled_bot = compile_bot("bots/order_bot.yaml")
+compiled_bot = compile_bot("bots/condition_demo.yaml")
 # делает быстрый индекс, чтобы runtime не искал ноду по списку каждый раз
 nodes_index = index_nodes(compiled_bot)
 # место, где храним “память” пользователей (сессии)

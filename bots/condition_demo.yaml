@@ -1,0 +1,34 @@
+bot: ConditionDemo
+
+slots:
+  city:
+    type: text
+
+rules:
+  - name: restart
+    pattern: "^(restart|заново|сначала|старт)$"
+    response: "Ок, начинаем заново."
+    action: restart
+
+flow:
+  - type: say
+    text: "Привет! Проверим условие."
+  - type: ask
+    slot: city
+    text: "В каком вы городе?"
+  - type: condition
+    slot: city
+    op: equals
+    value: "Zagreb"
+    if_true: zagreb_msg
+    if_false: other_msg
+
+labels:
+  zagreb_msg:
+    - type: say
+      text: "О, вы в Загребе!"
+    - type: end
+  other_msg:
+    - type: say
+      text: "Понял. Я умею ветвиться по условиям"
+    - type: end
