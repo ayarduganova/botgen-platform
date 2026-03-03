@@ -5,7 +5,7 @@ from app.compiler.compiler import compile_bot
 from app.runtime.engine import run_step
 from app.runtime.session import SessionState
 from app.runtime.utils import index_nodes
-from app.storage.memory_store import MemorySessionStore
+from app.storage.sqlite_store import SQLiteSessionStore
 
 # Создаём объект API-сервера
 app = FastAPI(title="BotGen Runtime")
@@ -15,7 +15,7 @@ compiled_bot = compile_bot("bots/order_bot.yaml")
 # делает быстрый индекс, чтобы runtime не искал ноду по списку каждый раз
 nodes_index = index_nodes(compiled_bot)
 # место, где храним “память” пользователей (сессии)
-store = MemorySessionStore()
+store = SQLiteSessionStore("botgen.db")
 
 
 class ChatRequest(BaseModel):
