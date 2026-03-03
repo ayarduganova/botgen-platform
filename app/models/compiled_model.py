@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from typing import List, Optional, Dict
+
+from pydantic import BaseModel
+
 
 # класс для слотов
 class SlotSpec(BaseModel):

@@ -1,7 +1,10 @@
-from typing import Dict, Any, List
-import yaml
 import uuid
+from typing import Dict, Any, List
+
+import yaml
+
 from app.models.compiled_model import Node, CompiledBot, SlotSpec, RuleSpec
+
 
 def _new_id() -> str:
     return str(uuid.uuid4())

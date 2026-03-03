@@ -1,9 +1,12 @@
-from typing import List, Dict, Optional
-from app.models.compiled_model import CompiledBot, Node
-from app.runtime.session import SessionState
-from app.runtime.validators import validate_slot
-from app.runtime.rules import match_rule, apply_rule
 import re
+from typing import List, Dict, Optional
+
+from app.models.compiled_model import CompiledBot, Node
+from app.runtime.rules import match_rule, apply_rule
+from app.runtime.session import SessionState
+from app.runtime.templating import render_template
+from app.runtime.validators import validate_slot
+
 
 # словарь
 class EngineResponse(dict):
@@ -62,7 +65,7 @@ def run_step(
         # Если ввод невалидный
         if not ok:
             err = spec.error_text if spec and spec.error_text else "Неверный формат. Попробуйте ещё раз."
-            return EngineResponse(messages=[err], session=session)
+            return EngineResponse(messages=[render_template(err, session.slots)], session=session)
 
         # Если ввод валидный — сохраняем слот и снимаем режим ожидания
         session.slots[slot_name] = normalized if normalized is not None else user_text.strip()
@@ -80,7 +83,7 @@ def run_step(
         if node.type == "say":
             # если есть текст → добавляем в messages
             if node.text:
-                messages.append(node.text)
+                messages.append(render_template(node.text, session.slots))
             # если есть next_node → двигаемся дальше и продолжаем цикл
             if node.next_node:
                 session.current_node_id = node.next_node
@@ -92,7 +95,7 @@ def run_step(
         if node.type == "ask":
             # если есть текст → добавляем в messages наш вопрос
             if node.text:
-                messages.append(node.text)
+                messages.append(render_template(node.text, session.slots))
             # ожидаем ответ
             session.awaiting_slot = node.slot
             break

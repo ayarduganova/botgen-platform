@@ -1,16 +1,17 @@
-from fastapi import FastAPI # создаёт веб-приложение (API сервер)
-from pydantic import BaseModel # описывает структуры запросов/ответов (валидирует JSON)
+from fastapi import FastAPI  # создаёт веб-приложение (API сервер)
+from pydantic import BaseModel  # описывает структуры запросов/ответов (валидирует JSON)
+
 from app.compiler.compiler import compile_bot
-from app.runtime.utils import index_nodes
-from app.runtime.session import SessionState
 from app.runtime.engine import run_step
+from app.runtime.session import SessionState
+from app.runtime.utils import index_nodes
 from app.storage.memory_store import MemorySessionStore
 
 # Создаём объект API-сервера
 app = FastAPI(title="BotGen Runtime")
 
 # читает YAML и строит модель бота (граф нод)
-compiled_bot = compile_bot("bots/condition_demo.yaml")
+compiled_bot = compile_bot("bots/order_bot.yaml")
 # делает быстрый индекс, чтобы runtime не искал ноду по списку каждый раз
 nodes_index = index_nodes(compiled_bot)
 # место, где храним “память” пользователей (сессии)

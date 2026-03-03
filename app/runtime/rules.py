@@ -1,7 +1,10 @@
 import re
 from typing import Optional
+
 from app.models.compiled_model import CompiledBot, RuleSpec
 from app.runtime.session import SessionState
+from app.runtime.templating import render_template
+
 
 # проверка на правило
 def match_rule(bot: CompiledBot, text: Optional[str]) -> Optional[RuleSpec]:
@@ -22,7 +25,7 @@ def match_rule(bot: CompiledBot, text: Optional[str]) -> Optional[RuleSpec]:
 # применяем правило
 def apply_rule(bot: CompiledBot, session: SessionState, rule: RuleSpec) -> list[str]:
     # получаем сообщение бота
-    messages = [rule.response]
+    messages = [render_template(rule.response, session.slots)]
     # получаем действие
     action = (rule.action or "none").lower()
 

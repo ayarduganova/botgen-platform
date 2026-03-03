@@ -1,5 +1,7 @@
 from typing import Dict, Optional
+
 from app.runtime.session import SessionState
+
 
 # хранилища сессий
 class MemorySessionStore:

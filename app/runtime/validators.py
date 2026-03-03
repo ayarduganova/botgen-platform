@@ -1,7 +1,7 @@
 import re
 from typing import Tuple, Optional
-from app.models.compiled_model import SlotSpec
 
+from app.models.compiled_model import SlotSpec
 
 DEFAULT_PATTERNS = {
     "phone": r"^(\+?\d[\d\s\-()]{7,}\d)$",
